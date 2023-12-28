@@ -7,10 +7,21 @@ if (-not $admin) {
     exit 0
 }
 
-$currentDirectory = Get-Location
+$currentDirectory = [System.IO.Path]::GetDirectoryName($MyInvocation.MyCommand.Path)
+Set-Location $currentDirectory
+
+$folders = @(
+    "chocolatey",
+    "ffmpeg",
+    "mics",
+    "tasks",
+    "winget",
+    "yt-dlp",
+    "zip"
+)
 
 Get-ChildItem | Foreach-Object {
-    if ($_.Mode.Contains("d")) {
+    if ($folders.Contains($_.Name)) {
         $paths = [Environment]::GetEnvironmentVariable('PATH', 'Machine') -split ';'
 
         $path = Join-Path $currentDirectory $_.Name
@@ -22,5 +33,7 @@ Get-ChildItem | Foreach-Object {
         } else {
             Write-Host "Directory is already in PATH: $path"
         }
+    } else {
+        Write-Host "Skipped directory $($_.Name)"
     }
 }
