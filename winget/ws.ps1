@@ -9,13 +9,15 @@ Write-Host("Searching for `"$args`"");
 
 $result = winget search $query
 
-$nameLengthFinder = $result | Select-String "Name *Id"
+$idAndVersionLengthFinder = $result | Select-String "Name *Id *Version"
 
-if ($nameLengthFinder.GetType().BaseType.Name -eq "Array") {
-    $nameLengthFinder = $nameLengthFinder[0]
+if ($idAndVersionLengthFinder.GetType().BaseType.Name -eq "Array") {
+    $idAndVersionLengthFinder = $idAndVersionLengthFinder[0]
 }
 
-$idLength = $nameLengthFinder.ToString().Split("Id")[0].Length
+
+$idLength = $idAndVersionLengthFinder.ToString().Split("Id")[0].Length
+$versionLength = $idAndVersionLengthFinder.ToString().Split("Version")[0].Length
 
 $items = $result | Select-String "winget|msstore" 
 
@@ -29,9 +31,16 @@ $ids = @()
 for ($i = 0; $i -lt $items.Count; $i++) {
     $item = $items[$i].ToString()
     $name = $item.Substring(0, $idLength).Trim()
+
+    if ($name.Contains("ΓÇ")) {
+        continue
+    }
+
     $id = $item.Substring($idLength).Split(" ")[0].Trim()
+    $version = $item.Substring($versionLength).Split(" ")[0].Trim()
     $ids = $ids + $id
-    Write-Host "$($i + 1). $name " -NoNewline  
+    Write-Host "$($i + 1). $name" -NoNewline  
+    Write-Host " [$version] " -NoNewline -ForegroundColor Green
     Write-Host "($id)" -ForegroundColor DarkGray 
 }
 
@@ -42,8 +51,18 @@ if (-not $index) {
     return
 }
 
-$selectedId = $ids[[int]$index - 1]
+try {
+    $index = [int]$index - 1
+    if ($index -lt 0 -or $index -ge $ids.Count) {
+        Write-Host "Number is out of limit" -ForegroundColor Red
+        return
+    }
+} catch {
+    Write-Host "Invalid number" -ForegroundColor Red
+    return
+}
 
-Write-Host "`nShowing $selectedId `n"
+$selectedId = $ids[$index]
+
+Write-Host "`nInstalling $selectedId"
 winget show --id $selectedId
-
