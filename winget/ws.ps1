@@ -28,8 +28,11 @@ if ($items.Length -eq 0) {
 
 $ids = @()
 
-for ($i = 0; $i -lt $items.Count; $i++) {
-    $item = $items[$i].ToString()
+$i = 0
+
+foreach ($item in $items) {
+    $item = $item.ToString()
+
     $name = $item.Substring(0, $idLength).Trim()
 
     if ($name.Contains("ΓÇ")) {
@@ -42,6 +45,8 @@ for ($i = 0; $i -lt $items.Count; $i++) {
     Write-Host "$($i + 1). $name" -NoNewline  
     Write-Host " [$version] " -NoNewline -ForegroundColor Green
     Write-Host "($id)" -ForegroundColor DarkGray 
+
+    $i++
 }
 
 $index = Read-Host "`nWhich package you want to show"
