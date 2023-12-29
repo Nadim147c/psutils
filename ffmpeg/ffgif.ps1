@@ -4,6 +4,10 @@ param(
     [int]$Loop = 0
 )
 
+if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
+    return
+}
+
 $palette = "$(New-Guid).png"
 
 $videoSize = ffprobe -v error -select_streams "v:0" -show_entries stream="width,height" -of "csv=s=x:p=0" $InputPath

@@ -16,6 +16,10 @@ param(
     [string]$BarColor = "black"
 )
 
+if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
+    return
+}
+
 if (-not $OutputPath) {
     $uuid = New-Guid 
         

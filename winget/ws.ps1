@@ -35,7 +35,7 @@ for ($i = 0; $i -lt $items.Count; $i++) {
     Write-Host "($id)" -ForegroundColor DarkGray 
 }
 
-$index = Read-Host "`nWhich package you want to install"
+$index = Read-Host "`nWhich package you want to show"
 
 if (-not $index) {
     Write-Host "Command exited without input" -ForegroundColor Red
@@ -44,5 +44,6 @@ if (-not $index) {
 
 $selectedId = $ids[[int]$index - 1]
 
-Write-Host "`nInstalling $selectedId"
-winget install --id $selectedId
+Write-Host "`nShowing $selectedId `n"
+winget show --id $selectedId
+

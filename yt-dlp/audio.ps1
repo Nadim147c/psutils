@@ -8,6 +8,14 @@ param(
     [switch]$YouTubeMusic
 )
 
+if (-not (CheckBinary "yt-dlp" "yt-dlp" "pip install yt-dlp")) {
+    return
+}
+
+if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
+    return
+}
+
 $outputPath = "%USERPROFILE%\Downloads\Audio\%(title)s-%(id)s.%(ext)s"
 
 $arguments = @(

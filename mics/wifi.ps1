@@ -1,6 +1,10 @@
 param(
-[string]$Name
+    [string]$Name
 )
+
+if (-not (CheckBinary "qr" "qrcode" "pip install qrcode")) {
+    return
+}
 
 if ($Name) {
     $profileinfo = netsh wlan show profile name="$Name" key=clear

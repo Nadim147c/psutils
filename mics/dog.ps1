@@ -2,6 +2,10 @@ param(
     [string]$path
 )
 
+if (-not (CheckBinary pygmentize Pygments "pip install pygments")) {
+    return
+}
+
 if ($MyInvocation.ExpectingInput -and -not $path) {
     $path = $input 
 }
