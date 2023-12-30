@@ -69,5 +69,5 @@ try {
 
 $selectedId = $ids[$index]
 
-Write-Host "`nInstalling $selectedId"
+Write-Host "`nShowing $selectedId"
 winget show --id $selectedId

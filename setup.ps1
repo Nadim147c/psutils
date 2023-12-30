@@ -13,6 +13,7 @@ Set-Location $currentDirectory
 $folders = @(
     "chocolatey",
     "ffmpeg",
+    "ImageMagick"
     "mics",
     "tasks",
     "winget",

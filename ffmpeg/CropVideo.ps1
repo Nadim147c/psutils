@@ -1,13 +1,12 @@
-
 param(
     [Parameter(position = 0, Mandatory = $true)]
     [string]$InputPath,
     [Parameter(position = 1, Mandatory = $false)]
-    [string]$OutputPath,
-    [Parameter(position = 2, Mandatory = $false)]
     [int]$RatioWidth,
-    [Parameter(position = 3, Mandatory = $false)]
+    [Parameter(position = 2, Mandatory = $false)]
     [int]$RatioHeight,
+    [Parameter(position = 3, Mandatory = $false)]
+    [string]$OutputPath,
     [int]$Top = 0,
     [int]$Bottom = 0,
     [int]$Left = 0,
@@ -16,7 +15,7 @@ param(
     [string]$BarColor = "black"
 )
 
-if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
+if (-not (CheckBinary ffmpeg ffmpeg "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
     return
 }
 
