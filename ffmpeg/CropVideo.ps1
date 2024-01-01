@@ -19,12 +19,6 @@ if (-not (CheckBinary ffmpeg ffmpeg "winget install Gyan.FFmpeg`" or `"choco ins
     return
 }
 
-if (-not $OutputPath) {
-    $uuid = New-Guid 
-        
-    $OutputPath = "$($uuid.Guid).mp4"
-}
-
 $videoSize = ffprobe -v error -select_streams "v:0" -show_entries stream="width,height" -of "csv=s=x:p=0" $InputPath
 
 $videoWidth = [int]($videoSize.ToString().Split("x")[0])
@@ -69,6 +63,13 @@ if ($RatioWidth -and $RatioHeight) {
     $crop = "$($width):$($height):$($x):$($y)"
 }
 
+
+if (-not $OutputPath) {
+    $fileName = [System.IO.Path]::GetFileName($InputPath)
+    $extension = [System.IO.Path]::GetExtension($InputPath)
+
+    $OutputPath = "$fileName.crop$($width)x$height$extension"
+}
 
 Write-Host "Running:"
 Write-Host "ffmpeg -i '$InputPath' -vf 'crop=$crop' $OutputPath\n" -ForegroundColor Cyan
