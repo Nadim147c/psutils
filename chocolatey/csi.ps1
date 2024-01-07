@@ -1,3 +1,4 @@
+
 $query = $args -join ' ';
 
 if (-not $query) {
@@ -5,26 +6,25 @@ if (-not $query) {
     return
 }
 
+if (-not (CheckBinary choco chocolatey "winget install chocolatey")) {
+    return
+}
+
+if (-not (CheckBinary sudo "Gsudo" "winget install gerardog.gsudo")) {
+    return
+}
+
+function idToName ([string]$id) {
+    $parts = [regex]::Split($id, "-|\.") 
+    $name = ""
+    $parts.ForEach({ $name = $name + " " + $_.Substring(0,1).ToUpper() + $_.Substring(1).ToLower() })
+
+    return $name.Trim()
+}
+
 Write-Host("Searching for `"$args`"");
 
-$result = winget search $query
-
-$idAndVersionLengthFinder = $result | Select-String "Name *Id *Version"
-
-if ($idAndVersionLengthFinder.GetType().BaseType.Name -eq "Array") {
-    $idAndVersionLengthFinder = $idAndVersionLengthFinder[0]
-}
-
-
-$idLength = $idAndVersionLengthFinder.ToString().Split("Id")[0].Length
-$versionLength = $idAndVersionLengthFinder.ToString().Split("Version")[0].Length
-
-$items = $result | Select-String "winget|msstore" 
-
-if ($items.Length -eq 0) {
-    Write-Host "0 result found"
-    return 
-}
+$items = choco search $query | Select-String "Approved"
 
 $ids = @()
 
@@ -33,14 +33,9 @@ $i = 0
 foreach ($item in $items) {
     $item = $item.ToString()
 
-    $name = $item.Substring(0, $idLength).Trim()
-
-    if ($name.Contains("ΓÇ") -or $name.Length -ge $idLength) {
-        continue
-    }
-
-    $id = $item.Substring($idLength).Split(" ")[0].Trim()
-    $version = $item.Substring($versionLength).Split(" ")[0].Trim()
+    $id = $item.Split(" ")[0].Trim()
+    $name = idToName($id)
+    $version = $item.Split(" ")[1].Trim()
     $ids = $ids + $id
     Write-Host "$($i + 1). $name" -NoNewline  
     Write-Host " [$version] " -NoNewline -ForegroundColor Green
@@ -70,4 +65,4 @@ try {
 $selectedId = $ids[$index]
 
 Write-Host "`nInstalling $selectedId"
-winget install --id $selectedId
+sudo choco install $selectedId -y

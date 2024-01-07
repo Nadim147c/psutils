@@ -35,7 +35,7 @@ foreach ($item in $items) {
 
     $name = $item.Substring(0, $idLength).Trim()
 
-    if ($name.Contains("ΓÇ")) {
+    if ($name.Contains("ΓÇ") -or $name.Length -ge $idLength) {
         continue
     }
 
