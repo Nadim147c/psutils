@@ -65,7 +65,7 @@ if ($RatioWidth -and $RatioHeight) {
 
 
 if (-not $OutputPath) {
-    $fileName = [System.IO.Path]::GetFileName($InputPath)
+    $fileName = [System.IO.Path]::GetFileNameWithoutExtension($InputPath)
     $extension = [System.IO.Path]::GetExtension($InputPath)
 
     $OutputPath = "$fileName.crop$($width)x$height$extension"

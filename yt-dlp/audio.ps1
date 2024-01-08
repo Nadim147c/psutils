@@ -16,7 +16,7 @@ if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco
     return
 }
 
-$outputPath = "%USERPROFILE%\Music\%(title)s-%(id)s.%(ext)s"
+$outputPath = "%USERPROFILE%\Downloads\Audio\%(title)s-%(id)s.%(ext)s"
 
 $arguments = @(
     "--extract-audio",

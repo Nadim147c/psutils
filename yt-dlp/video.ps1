@@ -17,7 +17,7 @@ if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco
     return
 }
 
-$outputPath = "%USERPROFILE%\Videos\%(title)s-%(id)s.%(ext)s"
+$outputPath = "%USERPROFILE%\Downloads\Video\%(title)s-%(id)s.%(ext)s"
 
 $arguments = @(
     "-f", "bv[height<=1080]+ba/b",
