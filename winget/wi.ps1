@@ -11,10 +11,14 @@ $result = winget search $query
 
 $idAndVersionLengthFinder = $result | Select-String "Name *Id *Version"
 
+if (-not $idAndVersionLengthFinder) {
+    Write-Host "0 result found"
+    return 
+}
+
 if ($idAndVersionLengthFinder.GetType().BaseType.Name -eq "Array") {
     $idAndVersionLengthFinder = $idAndVersionLengthFinder[0]
 }
-
 
 $idLength = $idAndVersionLengthFinder.ToString().Split("Id")[0].Length
 $versionLength = $idAndVersionLengthFinder.ToString().Split("Version")[0].Length
