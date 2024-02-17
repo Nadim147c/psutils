@@ -1,7 +1,8 @@
 param(
     [Parameter(position = 0, Mandatory = $true)]
     [string]$InputPath,
-    [int]$Loop = 0
+    [int]$Loop = 0,
+    [switch]$Preview
 )
 
 if (-not (CheckBinary "ffmpeg" "ffmpeg" "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
@@ -19,7 +20,11 @@ $outputPath = "$([System.IO.Path]::GetFileNameWithoutExtension($InputPath)).gif"
 
 $filter = "fps=10,scale=$($videoWidth):-1[x];[x][1:v]paletteuse"
 
-ffmpeg -i $InputPath -i $palette -loop $Loop -filter_complex $filter $outputPath
+if ($preview) {
+    ffplay -i $InputPath -i $palette -loop $Loop -filter_complex $filter 
+} else {
+    ffmpeg -i $InputPath -i $palette -loop $Loop -filter_complex $filter $outputPath
+}
 
 Remove-Item $palette
 

@@ -12,10 +12,16 @@ param(
     [int]$Left = 0,
     [int]$Right = 0,
     [ValidateSet("white", "black")]
-    [string]$BarColor = "black"
+    [string]$BarColor = "black",
+    [int]$Time = 2,
+    [switch]$Preview
 )
 
 if (-not (CheckBinary ffmpeg ffmpeg "winget install Gyan.FFmpeg`" or `"choco install ffmpeg")) {
+    return
+}
+
+if (-not (CheckBinary sed sed "choco install sed")) {
     return
 }
 
@@ -38,9 +44,9 @@ if ($RatioWidth -and $RatioHeight) {
     $crop = "$($width):$($height):$($x):$($y)"
 } else {
     if ($BarColor -eq "black") {
-        $cropValues = ffmpeg -i $InputPath -t 2 -vf "eq=contrast=1.8,cropdetect" -f null - 2>&1 | Select-String '(?<=crop=).*?(?=$)' 
+        $cropValues = ffmpeg -i $InputPath -t $Time -vf "eq=contrast=1.8,cropdetect" -f null - 2>&1 | sed -n '1!G;h;$p' | Select-String '(?<=crop=).*?(?=$)' 
     } else {
-        $cropValues = ffmpeg -i $InputPath -t 2 -vf "eq=contrast=1.8,negate,cropdetect" -f null - 2>&1 | Select-String '(?<=crop=).*?(?=$)' 
+        $cropValues = ffmpeg -i $InputPath -t $Time -vf "eq=contrast=1.8,negate,cropdetect" -f null - 2>&1 | sed -n '1!G;h;$p' | Select-String '(?<=crop=).*?(?=$)' 
     }
 
     $crop = $cropValues | ForEach-Object {$_.Matches} | ForEach-Object {$_.Value} | Sort-Object | Get-Unique
@@ -71,10 +77,18 @@ if (-not $OutputPath) {
     $OutputPath = "$fileName.crop$($width)x$height$extension"
 }
 
-Write-Host "Running:"
-Write-Host "ffmpeg -i '$InputPath' -vf 'crop=$crop' $OutputPath\n" -ForegroundColor Cyan
 
-ffmpeg -i $InputPath -vf "crop=$crop" $OutputPath
+if ($Preview) {
+    Write-Host "Running:"
+    Write-Host "ffplay -i '$InputPath' -vf 'crop=$crop,scale=450:-1'" -ForegroundColor Cyan
+    ffplay -i $InputPath -vf "crop=$crop,scale=450:-1"
+} else {
+    Write-Host "Running:"
+    Write-Host "ffmpeg -i '$InputPath' -vf 'crop=$crop' $OutputPath\n" -ForegroundColor Cyan
 
-Write-Host "Rerun (with fixes) this command to fix mistakes: "
-Write-Host "ffmpeg -i '$InputPath' -y -vf 'crop=$crop' $OutputPath" -ForegroundColor Cyan
+    ffmpeg -i $InputPath -vf "crop=$crop" $OutputPath
+
+    Write-Host "Rerun (with fixes) this command to fix mistakes: "
+    Write-Host "ffmpeg -i '$InputPath' -y -vf 'crop=$crop' $OutputPath" -ForegroundColor Cyan
+}
+
