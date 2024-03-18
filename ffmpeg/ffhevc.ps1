@@ -12,4 +12,5 @@ if (-not $OutputPath) {
     $OutputPath = "$fileName.HEVC.mkv"
 }
 
-ffmpeg -i $InputPath -c:v libx265 -preset $Preset $OutputPath 
+Write-Host "ffmpeg-bar -i '$InputPath' -c:v libx265 -preset $Preset '$OutputPath'"
+ffmpeg -i $InputPath -c:v libx265 -preset $Preset -loglevel verbose $OutputPath

@@ -13,6 +13,7 @@ if ($MyInvocation.ExpectingInput -and -not $path) {
 if (-not $path) {
     Write-Host "Path argument is missing." -ForegroundColor Red
     Write-Host "dog [file_path]"
+    return
 }
 
 pygmentize -g -O style=colorful $path

@@ -12,9 +12,7 @@ $ErrorActionPreference = ‘stop’
 
 try {
     $cmdExists = Get-Command $Command
-    if ($cmdExists) {
-        return $true 
-    }   
+    if ($cmdExists) { return $true }   
 } catch {
     Write-Host "$CommandName isn't installed in your system." -ForegroundColor Red
     Write-Host "Run: `"" -NoNewline
