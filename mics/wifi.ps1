@@ -38,15 +38,11 @@ if ($networks.GetType().Name -eq "String") {
     return wifi $networks
 }
 
-Write-Host "Available WiFi Networks: $($networks.Count)"
-for ($i = 0; $i -lt $networks.Count; $i++) {
-    Write-Host "$($i + 1). $($networks[$i])"
+$network = $networks | fzf
+
+if ( $network) {
+    return wifi $network
 }
 
-$choice = [int](Read-Host "Enter the number of the network you want to share")
+Write-Host "Command exited without input" -ForegroundColor Red
 
-if ($choice -ge 1 -and $choice -le $networks.Count) {
-    return wifi $networks[$choice - 1]
-} else {
-    Write-Host "Invalid selection. Please choose a valid option." -ForegroundColor Red
-}

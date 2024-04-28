@@ -5,6 +5,10 @@ if (-not $query) {
     return
 }
 
+if (-not (CheckBinary fzf fzf "winget install junegunn.fzf")) {
+    return
+}
+
 Write-Host("Searching for `"$args`"");
 
 $result = winget search $query
@@ -32,8 +36,8 @@ if ($items.Length -eq 0) {
 
 $ids = @()
 
+$text = ""
 $i = 0
-
 foreach ($item in $items) {
     $item = $item.ToString()
 
@@ -46,32 +50,17 @@ foreach ($item in $items) {
     $id = $item.Substring($idLength).Split(" ")[0].Trim()
     $version = $item.Substring($versionLength).Split(" ")[0].Trim()
     $ids = $ids + $id
-    Write-Host "$($i + 1). $name" -NoNewline  
-    Write-Host " [$version] " -NoNewline -ForegroundColor Green
-    Write-Host "($id)" -ForegroundColor DarkGray 
-
+    $text += "$($i + 1). $name [$version] ($id)`n"   
     $i++
 }
 
-$index = Read-Host "`nWhich package you want to install"
-
-if (-not $index) {
-    Write-Host "Command exited without input" -ForegroundColor Red
-    return
+$fzfOutput =  $text | fzf
+if (-not $fzfOutput) {
+    return Write-Host "Command exited without input" -ForegroundColor Red 
 }
-
-try {
-    $index = [int]$index - 1
-    if ($index -lt 0 -or $index -ge $ids.Count) {
-        Write-Host "Number is out of limit" -ForegroundColor Red
-        return
-    }
-} catch {
-    Write-Host "Invalid number" -ForegroundColor Red
-    return
-}
+$index = ([int]($fzfOutput.Split(".")[0])) - 1
 
 $selectedId = $ids[$index]
 
-Write-Host "`nInstalling $selectedId"
+Write-Host "`nInstalling $selectedId" -ForegroundColor Green
 winget install --id $selectedId
