@@ -18,8 +18,8 @@ if ($Name) {
         $Name = $ssids
     }
 
-    Write-Host "ssid: $name"
-    Write-Host "password: $password"
+    Write-Host "SSID: $name"
+    Write-Host "Password: $password"
 	
     # pip install qrcode
     qr --error-correction=H "WIFI:T:WPA;S:$name;P:$password;;"
@@ -38,11 +38,11 @@ if ($networks.GetType().Name -eq "String") {
     return wifi $networks
 }
 
-$network = $networks | fzf
+$network = $networks | fzf --info inline-right --layout reverse 
 
-if ( $network) {
-    return wifi $network
+if (-not $network) {
+    return Write-Host "Command exited without input" -ForegroundColor Red
 }
 
-Write-Host "Command exited without input" -ForegroundColor Red
+wifi $network
 
