@@ -25,7 +25,6 @@ if ($idAndVersionLengthFinder.GetType().BaseType.Name -eq "Array") {
 }
 
 $idLength = $idAndVersionLengthFinder.ToString().Split("Id")[0].Length
-$versionLength = $idAndVersionLengthFinder.ToString().Split("Version")[0].Length
 
 $items = $result | Select-String "winget|msstore" 
 
@@ -36,31 +35,23 @@ if ($items.Length -eq 0) {
 
 $ids = @()
 
-$text = ""
-$i = 0
 foreach ($item in $items) {
     $item = $item.ToString()
 
     $name = $item.Substring(0, $idLength).Trim()
-
     if ($name.Contains("ΓÇ") -or $name.Length -ge $idLength) {
-        continue
+        continue 
     }
 
     $id = $item.Substring($idLength).Split(" ")[0].Trim()
-    $version = $item.Substring($versionLength).Split(" ")[0].Trim()
     $ids = $ids + $id
-    $text += "$($i + 1). $name [$version] ($id)`n"   
-    $i++
 }
 
-$fzfOutput =  $text | fzf
-if (-not $fzfOutput) {
+$selectedId =  $ids | fzf --info inline-right --layout reverse --preview 'winget show --id {}' --preview-label "Package Information"
+
+if (-not $selectedId) {
     return Write-Host "Command exited without input" -ForegroundColor Red 
 }
-$index = ([int]($fzfOutput.Split(".")[0])) - 1
-
-$selectedId = $ids[$index]
 
 Write-Host "`nInstalling $selectedId" -ForegroundColor Green
 winget install --id $selectedId

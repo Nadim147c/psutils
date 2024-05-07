@@ -18,19 +18,13 @@ if (-not (CheckBinary fzf fzf "sudo choco install fzf")) {
     return
 }
 
-function idToName ([string]$id) {
-    $parts = [regex]::Split($id, "-|\.") 
-    $name = ""
-    $parts.ForEach({ $name = $name + " " + $_.Substring(0,1).ToUpper() + $_.Substring(1).ToLower() })
-
-    return $name.Trim()
-}
-
 Write-Host("Searching for `"$args`"");
 
-$items = choco search $query | Select-String "Approved" 
+$items = choco search $query | Select-String "Approved" | ForEach-Object { $_.ToString().Split(" ")[0] }
 
-$fzfOutput = $items | fzf
+$fzfOutput = $items | fzf --info inline-right --layout reverse --preview 'choco info {}' --preview-label "Package Information"
+
+
 if (-not $fzfOutput) {
     return Write-Host "Command exited without input" -ForegroundColor Red
 }
