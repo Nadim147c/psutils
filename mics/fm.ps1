@@ -19,6 +19,6 @@ foreach ($line in $input) {
     $inputData += $line 
 }
 
-$search = $inputData | fzf
+$search = $inputData | fzf --info inline-right --layout reverse 
 
 $inputData | rg -A 20 -F -p "$search"

@@ -24,7 +24,6 @@ $items = choco search $query | Select-String "Approved" | ForEach-Object { $_.To
 
 $fzfOutput = $items | fzf --info inline-right --layout reverse --preview 'choco info {}' --preview-label "Package Information"
 
-
 if (-not $fzfOutput) {
     return Write-Host "Command exited without input" -ForegroundColor Red
 }
