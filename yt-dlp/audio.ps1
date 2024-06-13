@@ -5,7 +5,6 @@ param(
     [string]$CookiesFile,
     [switch]$UseBraveCookies,
     [switch]$NoSponserBlock,
-    [switch]$YouTubeMusic
 )
 
 if (-not (CheckBinary "yt-dlp" "yt-dlp" "pip install yt-dlp")) {
@@ -50,13 +49,7 @@ if (-not $NoSponserBlock) {
 $validUrl = [System.Uri]::TryCreate($Url, [System.UriKind]::Absolute, [ref]$null)
 
 if (-not $validUrl) {
-    if ($YouTubeMusic) {
-        $arguments = $arguments + "--playlist-end" + "1"
-        $Url = "https://music.youtube.com/search?q=$Url"
-    } else {
-        $arguments.Add("-x")
-        $Url = "ytsearch:`"$Url`""
-    }
+    $Url = "ytsearch:`"$Url`""
 } else {
     $arguments = $arguments + "-x"
 }

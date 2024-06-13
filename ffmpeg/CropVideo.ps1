@@ -84,11 +84,11 @@ if ($Preview) {
     ffplay -i $InputPath -vf "crop=$crop,scale=450:-1"
 } else {
     Write-Host "Running:"
-    Write-Host "ffmpeg -i '$InputPath' -vf 'crop=$crop' -c copy $OutputPath\n" -ForegroundColor Cyan
+    Write-Host "ffmpeg -i '$InputPath' -vf 'crop=$crop' $OutputPath\n" -ForegroundColor Cyan
 
-    ffmpeg -i $InputPath -vf "crop=$crop" -c copy $OutputPath
+    ffmpeg -i $InputPath -vf "crop=$crop" $OutputPath
 
     Write-Host "Rerun (with fixes) this command to fix mistakes: "
-    Write-Host "ffmpeg -i '$InputPath' -y -vf 'crop=$crop' -c copy $OutputPath" -ForegroundColor Cyan
+    Write-Host "ffmpeg -i '$InputPath' -y -vf 'crop=$crop' $OutputPath" -ForegroundColor Cyan
 }
 
